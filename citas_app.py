@@ -11,6 +11,14 @@ st.set_page_config(
 st.title("🩺 Asistente de Citación para la Consulta de Mácula")
 
 # ==========================================================
+# FUNCIÓN DE RESETEO
+# ==========================================================
+def resetear():
+    """Recarga la página para limpiar todos los campos."""
+    st.session_state.clear()
+    st.rerun()
+
+# ==========================================================
 # SECCIÓN 1: CONTADOR DE SEMANAS DESDE LA ÚLTIMA VISITA
 # ==========================================================
 st.header("📆 Contador de Semanas desde la Última Visita")
@@ -20,7 +28,8 @@ fecha_ultima = st.date_input(
     value=None,
     min_value=date(2000, 1, 1),
     max_value=date.today(),
-    format="DD-MM-YYYY"
+    format="DD-MM-YYYY",
+    key="fecha_ultima"
 )
 
 if fecha_ultima:
@@ -28,28 +37,27 @@ if fecha_ultima:
     diferencia_dias = (hoy - fecha_ultima).days
     semanas = diferencia_dias // 7
     dias_restantes = diferencia_dias % 7
-    proxima_visita = fecha_ultima + timedelta(weeks=8)
-
     st.write(f"Han pasado **{semanas} semanas** y **{dias_restantes} días** desde la última visita.")
+
 st.markdown("---")
 
 # ==========================================================
 # SECCIÓN 2: CÁLCULO DE CITAS INTRAVÍTREAS
 # ==========================================================
-
 st.header("💉 Calculadora de Citas Intravítreas")
 
-farmacos = ["AVASTIN", "XIMLUCI", "VABYSMO", "EYLEA 2MG", "EYLEA 8MG"]
+farmacos = ["AVASTIN", "XIMLUCI", "VABYSMO", "EYLEA 2MG", "EYLEA 8MG", "OTRO"]
 
 # Entrada de fecha base (por defecto, hoy)
 fecha_input = st.date_input(
     "Fecha del último tratamiento",
     datetime.today(),
-    format="DD-MM-YYYY"
+    format="DD-MM-YYYY",
+    key="fecha_input"
 )
 
 # Selector de ojo
-ojo = st.selectbox("Ojo a tratar", ["Elige", "Derecho", "Izquierdo", "Ambos"])
+ojo = st.selectbox("Ojo a tratar", ["Elige", "Derecho", "Izquierdo", "Ambos"], key="ojo")
 
 # --- Funciones auxiliares ---
 def formatear_semana(fecha):
@@ -104,9 +112,18 @@ if ojo in ["Izquierdo", "Ambos"]:
         for i, f in enumerate(fechas):
             resultado += f"Dosis {i+1}: semana del {formatear_semana(f)}\n"
 
-# --- Botón para mostrar resultados ---
-if st.button("Calcular"):
-    st.text_area("Resultado", resultado, height=300)
+# ==========================================================
+# BOTONES DE ACCIÓN
+# ==========================================================
+col1, col2 = st.columns(2)
+
+with col1:
+    if st.button("Calcular"):
+        st.text_area("Resultado", resultado, height=300)
+
+with col2:
+    if st.button("🔄 Resetear todos los campos"):
+        resetear()
 
 # -------------------- PIE DE PÁGINA --------------------
 st.markdown("---")
