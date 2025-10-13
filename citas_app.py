@@ -8,7 +8,7 @@ st.set_page_config(
     layout="centered"
 )
 
-st.title("🩺 Asistente de Citación para la consulta de Mácula")
+st.title("🩺 Asistente de Citación para la Consulta de Mácula")
 
 # ==========================================================
 # SECCIÓN 1: CONTADOR DE SEMANAS DESDE LA ÚLTIMA VISITA
