@@ -110,4 +110,4 @@ if st.button("Calcular"):
 
 # -------------------- PIE DE PÁGINA --------------------
 st.markdown("---")
-st.caption("Aplicación para uso clínico interno – © 2025, Dr. Jesús Zarallo [Retina Médica y Quirúrgica]")
+st.caption("Aplicación para uso clínico interno – © 2025, Dr. Jesús Zarallo MD, PhD. Hospital Universitario del Henares")
