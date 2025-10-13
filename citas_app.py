@@ -31,8 +31,6 @@ if fecha_ultima:
     proxima_visita = fecha_ultima + timedelta(weeks=8)
 
     st.write(f"Han pasado **{semanas} semanas** y **{dias_restantes} días** desde la última visita.")
-    st.write(f"📅 Fecha estimada para próxima revisión (8 semanas): **{proxima_visita.strftime('%d-%m-%Y')}**")
-
 st.markdown("---")
 
 # ==========================================================
