@@ -1,25 +1,66 @@
 import streamlit as st
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 
-st.title("Calculadora de Citas Intravítreas")
+# -------------------- CONFIGURACIÓN --------------------
+st.set_page_config(
+    page_title="Citas Intravítreas y Contador de Semanas",
+    page_icon="🩺",
+    layout="centered"
+)
+
+st.title("🩺 Calculadora de Citas Intravítreas y Contador de Semanas")
+
+# ==========================================================
+# SECCIÓN 1: CONTADOR DE SEMANAS DESDE LA ÚLTIMA VISITA
+# ==========================================================
+st.header("📆 Contador de Semanas desde la Última Visita")
+
+fecha_ultima = st.date_input(
+    "Fecha de última visita",
+    value=None,
+    min_value=date(2000, 1, 1),
+    max_value=date.today(),
+    format="DD-MM-YYYY"
+)
+
+if fecha_ultima:
+    hoy = date.today()
+    diferencia_dias = (hoy - fecha_ultima).days
+    semanas = diferencia_dias // 7
+    dias_restantes = diferencia_dias % 7
+    proxima_visita = fecha_ultima + timedelta(weeks=8)
+
+    st.write(f"Han pasado **{semanas} semanas** y **{dias_restantes} días** desde la última visita.")
+    st.write(f"📅 Fecha estimada para próxima revisión (8 semanas): **{proxima_visita.strftime('%d-%m-%Y')}**")
+
+st.markdown("---")
+
+# ==========================================================
+# SECCIÓN 2: CÁLCULO DE CITAS INTRAVÍTREAS
+# ==========================================================
+
+st.header("💉 Calculadora de Citas Intravítreas")
 
 farmacos = ["AVASTIN", "XIMLUCI", "VABYSMO", "EYLEA 2MG", "EYLEA 8MG"]
 
-# Entrada de fecha
-fecha_input = st.date_input("Fecha del último tratamiento", datetime.today())
+# Entrada de fecha base (por defecto, hoy)
+fecha_input = st.date_input(
+    "Fecha del último tratamiento",
+    datetime.today(),
+    format="DD-MM-YYYY"
+)
 
 # Selector de ojo
 ojo = st.selectbox("Ojo a tratar", ["Elige", "Derecho", "Izquierdo", "Ambos"])
 
-# Función para calcular fechas
-
+# --- Funciones auxiliares ---
 def formatear_semana(fecha):
     lunes = fecha - timedelta(days=fecha.weekday())
     viernes = lunes + timedelta(days=4)
     return f"{lunes.strftime('%d-%m-%Y')} al {viernes.strftime('%d-%m-%Y')}"
 
 def lunes_a_viernes(fecha):
-    while fecha.weekday() > 4:
+    while fecha.weekday() > 4:  # 0=lunes, 6=domingo
         fecha += timedelta(days=1)
     return fecha
 
@@ -33,6 +74,7 @@ def calcular_fechas(base, intervalos):
 
 resultado = ""
 
+# --- Ojo Derecho ---
 if ojo in ["Derecho", "Ambos"]:
     st.subheader("Ojo Derecho")
     farmaco_d = st.selectbox("Fármaco OD", farmacos, key='farm_d')
@@ -48,6 +90,7 @@ if ojo in ["Derecho", "Ambos"]:
         for i, f in enumerate(fechas):
             resultado += f"Dosis {i+1}: semana del {formatear_semana(f)}\n"
 
+# --- Ojo Izquierdo ---
 if ojo in ["Izquierdo", "Ambos"]:
     st.subheader("Ojo Izquierdo")
     farmaco_i = st.selectbox("Fármaco OI", farmacos, key='farm_i')
@@ -63,5 +106,10 @@ if ojo in ["Izquierdo", "Ambos"]:
         for i, f in enumerate(fechas):
             resultado += f"Dosis {i+1}: semana del {formatear_semana(f)}\n"
 
+# --- Botón para mostrar resultados ---
 if st.button("Calcular"):
     st.text_area("Resultado", resultado, height=300)
+
+# -------------------- PIE DE PÁGINA --------------------
+st.markdown("---")
+st.caption("Aplicación para uso clínico interno – © 2025, Dr. Jesús Zarallo [Retina Médica y Quirúrgica]")
